@@ -41,7 +41,7 @@ watch(smAndDown, (newVal) => {
 watch(workingItem, (newVal) => {
   if (newVal) {
     newVal.totalProducts = newVal.detail.reduce((sum, item) => sum + item.quantity, 0);
-    newVal.totalAmount = newVal.detail.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
+    newVal.totalAmount = newVal.detail.reduce((sum, item) => sum + item.quantity * item.sellPrice, 0);
   }
 }, { deep: true });
 

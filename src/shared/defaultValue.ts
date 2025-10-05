@@ -10,6 +10,33 @@ const reportRangeOptions = [
   { label: 'Tùy chọn', value: ReportRange.CUSTOM },
 ];
 
+const reportTableHeaders = [
+  {
+    title: '',
+    key: 'exportDate',
+    fixed: true,
+  },
+  {
+    title: 'Doanh số',
+    key: 'totalRevenue',
+    align: 'end',
+    fixed: true,
+  },
+  {
+    title: 'Vốn',
+    key: 'totalCapital',
+    align: 'end',
+    fixed: true,
+  },
+  {
+    title: 'Lãi',
+    key: 'totalProfit',
+    align: 'end',
+    fixed: true,
+  }
+]
+
 export default {
   reportRangeOptions,
+  reportTableHeaders
 }

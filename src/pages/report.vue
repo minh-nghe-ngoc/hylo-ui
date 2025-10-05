@@ -1,36 +1,31 @@
 <script setup lang="ts">
 import AppDateTimePicker from '@/@core/components/app-form-elements/AppDateTimePicker.vue';
-import App from '@/App.vue';
+import { ReportRequest } from '@/models/requests/reportRequestModel';
+import { ReportResponse } from '@/models/responses/reportResponseModel';
+import reportService from '@/services/reportService';
 import defaultValue from '@/shared/defaultValue';
 import { ReportRange } from '@/shared/enums';
-import { all } from 'axios';
 import moment from 'moment';
-import FlatPickr from 'vue-flatpickr-component'
 
 const reportRangeOptions = ref(defaultValue.reportRangeOptions)
-const queryParams = ref({
-  range: ReportRange.TODAY,
-  fromDate: '',
-  toDate: ''
-})
-const data = ref({
-  totalRevenue: 10000,
-  totalCapital: 8000,
-  totalProfit: 2000,
-  detail: [
-    {
-      exportDate: '2023-10-01',
-      totalRevenue: 10000,
-      totalCapital: 8000,
-      totalProfit: 2000,
-    }
-  ]
-})
+const queryParams = ref<ReportRequest>(new ReportRequest())
+
+const data = ref<ReportResponse>(new ReportResponse());
 
 watch(() => queryParams.value, (newVal) => {
-  console.log('Range changed to:', newVal);
 }, { immediate: true });
 
+const fetchData = async () => {
+  try {
+    data.value = await reportService.getReport(queryParams.value);
+  } catch (error) {
+    console.error('Error fetching report data:', error);
+  }
+}
+
+onMounted(async () => {
+  await fetchData();
+});
 </script>
 <template>
 <div class="page__container">
@@ -45,6 +40,7 @@ watch(() => queryParams.value, (newVal) => {
         dense
         outlined
         style="max-width: 150px;"
+        @update:model-value="fetchData"
       />
     </div>
     <AppDateTimePicker
@@ -59,36 +55,63 @@ watch(() => queryParams.value, (newVal) => {
     />
   </div>
   <div class="page__content">
-    <v-row dense>
-      <v-col cols="4" offset="2">
-        <p>Doanh thu</p>
-        <p>{{ data.totalRevenue }}</p>
-      </v-col>
-      <v-col cols="3">
-        <p>Vốn</p>
-        <p>{{ data.totalCapital }}</p>
-      </v-col>
-      <v-col cols="3">
-        <p>Lợi nhuận</p>
-        <p>{{ data.totalProfit }}</p>
-      </v-col>
-    </v-row>
-    <v-row dense v-for="(item, index) in data.detail" :key="index" class="mt-4">
-      <v-col cols="2">
-        <p>{{ moment(item.exportDate).format('DD/MM') }}</p>
-        <p>{{ moment(item.exportDate).format('YYYY') }}</p>
+    <v-row no-gutters class="mt-2">
+      <v-col cols="4" offset="1">
+        <div class="d-flex flex-column align-end">
+          <span>Doanh số</span>
+          <small>{{ (data.totalRevenue || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</small>
+        </div>
       </v-col>
       <v-col cols="4">
-        <p>{{ item.totalRevenue.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</p>
+        <div class="d-flex flex-column align-end">
+          <span>Vốn</span>
+          <small>{{ (data.totalCapital || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</small>
+        </div>
       </v-col>
       <v-col cols="3">
-        <p>{{ item.totalCapital.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</p>
+        <div class="d-flex flex-column align-end">
+          <span>Lãi</span>
+          <small>{{ (data.totalProfit || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</small>
+        </div>
       </v-col>
-      <v-col cols="3">
-        <p>{{ item.totalProfit.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</p>
-      </v-col>
-
     </v-row>
+    <template v-for="item in data.items" :key="item.id">
+      <v-divider class="my-2"></v-divider>
+      <v-row no-gutters class="align-center">
+        <v-col cols="1">
+          <div class="d-flex flex-column">
+            <span style="color: green">{{ moment(item.exportDate).format('DD/MM') }}</span>
+            <small>{{ moment(item.exportDate).format('YYYY') }}</small>
+          </div>
+        </v-col>
+        <v-col cols="4">
+          <div class="d-flex flex-column align-end">
+            <div>
+              <small>{{ (item.totalRevenue || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</small>
+            </div>
+          </div>
+        </v-col>
+        <v-col cols="4">
+          <div class="d-flex flex-column align-end">
+            <small>{{ (item.totalCapital || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</small>
+          </div>
+        </v-col>
+        <v-col cols="3">
+          <div class="d-flex flex-column align-end">
+            <small>{{ (item.totalProfit || 0).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</small>
+          </div>
+        </v-col>
+      </v-row>
+    </template>
+  </div>
+  <div class="page__footer">
+    <v-pagination
+      :length="data.totalPages"
+      v-model="queryParams.pageNo"
+      @update:model-value="fetchData"
+      total-visible="7"
+      color="primary"
+    />
   </div>
 </div>  
 </template>
