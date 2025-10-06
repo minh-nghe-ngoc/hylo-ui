@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import DefaultFullScreenContent from '@/components/DefaultFullScreenContent.vue';
 import CustomerMock from '@/mocks/CustomerMock';
 import { BaseQueryParams } from '@/models/QueryParams';
 import { ExportDetailResponse, ExportResponse } from '@/models/responses/exportResponseModels';
@@ -80,11 +79,6 @@ const onUpdateCustomerId = (value: any) => {
 
 const onChangeQuantity = (item: any, value: string) => {
   const numericValue = parseInt(value);
-  const maxAvailable = productRef.value.find(p => p.id === item.productId)?.remain || 0;
-  if (numericValue > maxAvailable) {
-    item.quantity = maxAvailable; // Cap to available stock
-    return;
-  } 
   if (!isNaN(numericValue) && numericValue > 0) {
     item.quantity = numericValue;
   } else {
@@ -114,6 +108,11 @@ const onPaidClick = async () => {
 }
 
 const saveExport = async () => {
+  if (workingItem.value.detail.length === 0) {
+    isActionError.value = true;
+    errorMessage.value = 'Vui lòng chọn sản phẩm để xuất hàng.';
+    return;
+  }
   try {
     isLoading.value = true;
     if (workingItem.value.id > 0) {

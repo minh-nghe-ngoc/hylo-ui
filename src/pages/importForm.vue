@@ -117,6 +117,11 @@ const onImportClick = async () => {
 };
 
 const saveImport = async () => {
+  if (workingItem.value.detail.length === 0) {
+    isActionError.value = true;
+    errorMessage.value = 'Vui lòng chọn sản phẩm để nhập hàng.';
+    return;
+  }
   try {
     isLoading.value = true;
     if (workingItem.value.id > 0) {
