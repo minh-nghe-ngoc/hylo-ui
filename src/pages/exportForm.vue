@@ -108,6 +108,7 @@ const onPaidClick = async () => {
 }
 
 const saveExport = async () => {
+  if (isLoading.value) return; // Prevent multiple submissions
   if (workingItem.value.detail.length === 0) {
     isActionError.value = true;
     errorMessage.value = 'Vui lòng chọn sản phẩm để xuất hàng.';
@@ -252,7 +253,6 @@ const fetchExport = async (id: number) => {
                   class="no-label text-bold"
                   v-model.number="item.quantity"
                   type="number"
-                  min="1"
                   @update:model-value="onChangeQuantity(item, $event)"
                 />
               </v-col>

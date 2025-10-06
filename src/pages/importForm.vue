@@ -48,19 +48,19 @@ const onHistoryIconClick = () => {
 };
 
 const onProductSelect = (productId: number) => {
-  const product = SearchBoxMock.products.find(p => p.id === productId);
+  const product = productRef.value.find(p => p.id === productId);
   if (product && workingItem.value) {
     const existingItem = workingItem.value.detail.find(item => item.productId === product.id);
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
       workingItem.value.detail.push({
-        id: Math.floor(Math.random() * -1000), // Temporary negative ID for new items
+        id: parseInt((Math.random() * -1000).toString()),
         productId: product.id,
         productName: product.name,
         quantity: 1,
         unitPrice: product.unitPrice,
-        sellPrice: 0
+        sellPrice: product.sellPrice
       });
     }
   }
@@ -117,6 +117,7 @@ const onImportClick = async () => {
 };
 
 const saveImport = async () => {
+  if (isLoading.value) return; // Prevent multiple submissions
   if (workingItem.value.detail.length === 0) {
     isActionError.value = true;
     errorMessage.value = 'Vui lòng chọn sản phẩm để nhập hàng.';
