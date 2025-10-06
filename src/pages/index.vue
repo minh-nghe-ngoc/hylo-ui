@@ -35,12 +35,16 @@ const onDeleteIconClick = async (product: WarehouseItem) => {
 };
 
 const onSaveIconClick = async (product: any) => {
+  if (isLoading.value) return; // Prevent multiple submissions
   try {
+    isLoading.value = true;
     await warehouseService.updateProduct(product.id, product);
     await fetchData();
   } catch (error) {
     isError.value = true;
     console.error('Error saving product:', error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
