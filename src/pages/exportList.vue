@@ -128,7 +128,7 @@ const fetchData = async () => {
                 <v-chip :color="computeColor(item)">{{ item.totalProducts }}</v-chip>
               </v-col>
               <v-col cols="4" class="d-flex align-center justify-end">
-                <h3>{{ item.totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h3>
+                <h3>{{ item.totalAmount.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h3>
               </v-col>
             </v-row>
           </v-expansion-panel-title>
@@ -142,7 +142,7 @@ const fetchData = async () => {
                   <h4>{{ i.quantity }}</h4>
                 </v-col>
                 <v-col cols="3" class="d-flex align-center justify-end">
-                  <h4>{{ (i.unitPrice * i.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h4>
+                  <h4>{{ (i.unitPrice * i.quantity).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h4>
                 </v-col>
               </v-row>
             </div>

@@ -123,7 +123,7 @@ const fetchData = async () => {
                 </v-col>
                 <v-spacer />
                 <v-col cols="4" class="d-flex align-center justify-end">
-                  <h3>{{ importItem.totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h3>
+                  <h3>{{ importItem.totalAmount.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h3>
                 </v-col>
               </v-row>
             </v-expansion-panel-title>
@@ -137,7 +137,7 @@ const fetchData = async () => {
                     <h4>{{ product.quantity }}</h4>
                   </v-col>
                   <v-col cols="3" class="d-flex align-center justify-end">
-                    <h4>{{ (product.unitPrice * product.quantity).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h4>
+                    <h4>{{ (product.unitPrice * product.quantity).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h4>
                   </v-col>
                 </v-row>
               </div>

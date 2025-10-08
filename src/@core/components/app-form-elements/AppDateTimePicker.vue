@@ -56,7 +56,6 @@ defineOptions({
 const attrs = useAttrs()
 
 const [rootAttrs, compAttrs] = filterInputAttrs(attrs)
-console.log('compAttrs', compAttrs)
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const [{ modelValue: _, ...inputProps }] = VInput.filterProps(props)
 const [fieldProps] = filterFieldProps(props)

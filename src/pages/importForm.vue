@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import SearchBoxMock from '@/mocks/SearchBoxMock';
 import { BaseQueryParams } from '@/models/QueryParams';
 import { ImportDetailResponse, ImportResponse } from '@/models/responses/importResponseModels';
 import { WarehouseItem } from '@/models/responses/warehouseResponseModels';
@@ -54,7 +53,7 @@ const onProductSelect = (productId: number) => {
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
-      workingItem.value.detail.push({
+      workingItem.value.detail.unshift({
         id: parseInt((Math.random() * -1000).toString()),
         productId: product.id,
         productName: product.name,
@@ -93,7 +92,7 @@ const onAddIconClick = () => {
   }
   if (newProduct.value && workingItem.value) {
     if (newProduct.value.quantity > 0 && newProduct.value.unitPrice > 0 && newProduct.value.sellPrice > 0) {
-      workingItem.value.detail.push({ ...newProduct.value });
+      workingItem.value.detail.unshift({ ...newProduct.value });
       newProduct.value = new ImportDetailResponse();
     } else {
       isActionError.value = true;
@@ -232,7 +231,7 @@ const fetchImport = async (importId: number) => {
                 />
               </v-col>
               <v-col cols="4" class="d-flex align-center justify-end">
-                <h4>{{ (item.quantity * item.unitPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h4>
+                <h4>{{ (item.quantity * item.unitPrice).toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h4>
               </v-col>
               <v-col cols="1" v-if="!isMobile" class="d-flex align center justify-end">
                 <v-icon color="error" @click="onRemoveIconClick(item)">mdi-close</v-icon>
@@ -295,7 +294,7 @@ const fetchImport = async (importId: number) => {
         </v-col>
         <v-spacer />
         <v-col cols="3" class="d-flex align-center justify-end">
-          <h4 style="color: blue;">{{ workingItem?.totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h4>
+          <h4 style="color: blue;">{{ workingItem?.totalAmount.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h4>
         </v-col>
       </v-row>
       <v-row class="px-2 pb-2">

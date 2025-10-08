@@ -61,13 +61,12 @@ const onProductSelect = (productId: number) => {
     newItem.quantity = 1;
     newItem.unitPrice = product.unitPrice;
     newItem.sellPrice = product.sellPrice;
-    workingItem.value.detail.push(newItem);
+    workingItem.value.detail.unshift(newItem);
     selectedProduct.value = null; // Clear selection after adding
   }
 };
 
 const onUpdateCustomerId = (value: any) => {
-  console.log(value);
   if (typeof value === 'object') {
     workingItem.value.customerId = value.id;
     workingItem.value.customerName = value.name;
@@ -271,7 +270,7 @@ const fetchExport = async (id: number) => {
         </v-col>
         <v-spacer />
         <v-col cols="3" class="d-flex align-center justify-end">
-          <h4 style="color: blue;">{{ workingItem?.totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h4>
+          <h4 style="color: blue;">{{ workingItem?.totalAmount.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h4>
         </v-col>
       </v-row>
       <v-row class="px-2 pb-2">

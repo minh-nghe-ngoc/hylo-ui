@@ -8,7 +8,7 @@ import { onMounted, ref } from 'vue';
 const isLoading = ref(false);
 const isError = ref(false);
 const data = ref<WareHouseResponse>(new WareHouseResponse());
-const queryParams = ref<BaseQueryParams>(new BaseQueryParams().addSort(SortBy.REMAINING_QUANTITY, true).addSort(SortBy.REMAINING_PRICE, true));
+const queryParams = ref<BaseQueryParams>(new BaseQueryParams().addSort(SortBy.REMAINING_PRICE, false));
 const menuItems = ref([
   {
     icon: 'mdi-pencil',
@@ -94,7 +94,7 @@ onMounted(async () => {
     <div class="page__header">
       <div class="d-flex justify-space-between align-center">
         <h3>Kho <v-chip color="success">{{ data?.remain }}</v-chip></h3>
-        <h3 style="color: blue;">{{ data?.totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h3>
+        <h3 style="color: blue;">{{ data?.totalAmount.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h3>
       </div>
       <v-text-field 
         class="my-2"
@@ -130,7 +130,7 @@ onMounted(async () => {
             style="max-width: 200px;"
           />
           <div class="d-flex align-center">
-            <h4 style="color: blue;">{{ product.totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) }}</h4>
+            <h4 style="color: blue;">{{ product.totalAmount.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</h4>
             <v-menu v-if="!product.isEditing">
               <template v-slot:activator="{ props }">
                 <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
