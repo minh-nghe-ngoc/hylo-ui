@@ -81,7 +81,7 @@ const onChangeQuantity = (item: any, value: string) => {
   if (!isNaN(numericValue) && numericValue > 0) {
     item.quantity = numericValue;
   } else {
-    item.quantity = 1; // Default to 1 if invalid
+    item.quantity = 0; // Default to 0 if invalid
   }
 };
 

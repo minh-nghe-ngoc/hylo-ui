@@ -227,7 +227,6 @@ const fetchImport = async (importId: number) => {
                   class="no-label text-bold"
                   v-model.number="item.quantity"
                   type="number"
-                  min="1"
                 />
               </v-col>
               <v-col cols="4" class="d-flex align-center justify-end">
