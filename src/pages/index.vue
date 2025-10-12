@@ -24,6 +24,12 @@ const onEditIconClick = (product: WarehouseItem) => {
   product.isEditing = true;
 };
 
+const chipColor = (product: WarehouseItem) => {
+  if (product.remain > 5) return 'success';
+  if (product.remain > 0) return 'warning';
+  return 'error';
+};
+
 const onDeleteIconClick = async (product: WarehouseItem) => {
   try {
     await warehouseService.deleteProduct(product.id);  
@@ -121,7 +127,7 @@ onMounted(async () => {
     <div class="page__content">
       <template v-for="product in data.items" :key="product.id" >
         <div class="my-4 d-flex justify-space-between align-center">
-          <h4 v-if="!product.isEditing">{{ product.name }} <v-chip color="success">{{ product.remain }}</v-chip></h4>
+          <h4 v-if="!product.isEditing">{{ product.name }} <v-chip :color="chipColor(product)">{{ product.remain }}</v-chip></h4>
           <v-text-field 
             v-else 
             v-model="product.name" 

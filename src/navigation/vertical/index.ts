@@ -12,7 +12,7 @@ export default [
     icon: { icon: 'tabler-file' },
     children: [
       {
-        title: 'Xuất hàng',
+        title: 'Bán hàng',
         to: { name: 'export' },
         icon: { icon: 'tabler-file-export', size: 20},
       },

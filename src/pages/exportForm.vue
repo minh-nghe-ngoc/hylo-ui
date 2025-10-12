@@ -53,7 +53,7 @@ const productProps = (item: any) => {
 }
 
 const onProductSelect = (productId: number) => {
-  const product = productRef.value.find(p => p.id === productId && p.remain > 0);
+  const product = productRef.value.find(p => p.id === productId);
   if (workingItem.value && product && !workingItem.value.detail.some(i => i.productId === product.id)) {
     var newItem = new ExportDetailResponse();
     newItem.productId = product.id;
@@ -78,10 +78,10 @@ const onUpdateCustomerId = (value: any) => {
 
 const onChangeQuantity = (item: any, value: string) => {
   const numericValue = parseInt(value);
-  if (!isNaN(numericValue) && numericValue > 0) {
+  if (!isNaN(numericValue)) {
     item.quantity = numericValue;
   } else {
-    item.quantity = 0; // Default to 0 if invalid
+    item.quantity = 0;
   }
 };
 
@@ -110,7 +110,7 @@ const saveExport = async () => {
   if (isLoading.value) return; // Prevent multiple submissions
   if (workingItem.value.detail.length === 0) {
     isActionError.value = true;
-    errorMessage.value = 'Vui lòng chọn sản phẩm để xuất hàng.';
+    errorMessage.value = 'Vui lòng chọn sản phẩm để bán hàng.';
     return;
   }
   try {
@@ -122,12 +122,12 @@ const saveExport = async () => {
       await fetchProducts();
       onCancelClick();
       isActionError.value = true;
-      errorMessage.value = 'Lưu đơn xuất hàng thành công.';
+      errorMessage.value = 'Lưu đơn bán hàng thành công.';
     }
     onCancelClick();
   } catch (error) {
     isActionError.value = true;
-    errorMessage.value = 'Đã xảy ra lỗi khi lưu đơn xuất hàng.';
+    errorMessage.value = 'Đã xảy ra lỗi khi lưu đơn bán hàng.';
   } finally {
     isLoading.value = false;
   }
@@ -201,7 +201,7 @@ const fetchExport = async (id: number) => {
   <div class="page__container">
     <div class="page__header">
       <div class="d-flex align-center justify-space-between">
-        <h2>Xuất hàng</h2>
+        <h2>Bán hàng</h2>
         <v-icon color="primary" @click="onHistoryIconClick">tabler-notes</v-icon>
       </div>
       <v-combobox

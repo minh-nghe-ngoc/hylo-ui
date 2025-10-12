@@ -88,7 +88,7 @@ const fetchData = async () => {
   <div class="page__container">
     <div class="page__header">
       <div class="d-flex align-center justify-space-between">
-        <h2>Lịch sử xuất hàng</h2>
+        <h2>Lịch sử bán hàng</h2>
         <v-icon color="primary" @click="onCloseIconClick">mdi-close</v-icon>
       </div>
       <v-row>
