@@ -22,6 +22,7 @@ export class ExportDetailResponse {
   quantity: number = 0;
   unitPrice: number = 0;
   sellPrice: number = 0;
+  isDirty: boolean = false;
 
   constructor(init?: Partial<ExportDetailResponse>) {
     Object.assign(this, init);

@@ -1,5 +1,4 @@
 import type { VerticalNavItems } from '@/@layouts/types'
-import { size } from '@floating-ui/dom'
 
 export default [
   {
@@ -8,20 +7,14 @@ export default [
     icon: { icon: 'tabler-smart-home' },
   },
   {
-    title: 'Nghiệp vụ',
-    icon: { icon: 'tabler-file' },
-    children: [
-      {
-        title: 'Bán hàng',
-        to: { name: 'export' },
-        icon: { icon: 'tabler-file-export', size: 20},
-      },
-      {
-        title: 'Nhập hàng',
-        to: { name: 'import' },
-        icon: { icon: 'tabler-file-import' , size: 20},
-      }
-    ],
+    title: 'Bán hàng',
+    to: { name: 'export' },
+    icon: { icon: 'tabler-file-export' },
+  },
+  {
+    title: 'Nhập hàng',
+    to: { name: 'import' },
+    icon: { icon: 'tabler-file-import' },
   },
   {
     title: 'Báo cáo',

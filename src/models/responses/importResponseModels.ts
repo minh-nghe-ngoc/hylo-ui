@@ -2,6 +2,8 @@ import { ImportStatus } from "@/shared/enums";
 
 export class ImportResponse {
   id: number = 0;
+  supplierId: number | null = null;
+  supplierName: string = "";
   totalProducts: number = 0;
   totalAmount: number = 0;
   importDate: Date = new Date();

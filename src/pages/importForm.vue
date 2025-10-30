@@ -3,6 +3,7 @@ import { BaseQueryParams } from '@/models/QueryParams';
 import { ImportDetailResponse, ImportResponse } from '@/models/responses/importResponseModels';
 import { WarehouseItem } from '@/models/responses/warehouseResponseModels';
 import importService from '@/services/importService';
+import supplierService from '@/services/supplierService';
 import warehouseService from '@/services/warehouseService';
 import { ImportStatus } from '@/shared/enums';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
@@ -24,6 +25,7 @@ const workingItem = ref<ImportResponse>(new ImportResponse());
 const newProduct = ref<ImportDetailResponse>(new ImportDetailResponse());
 const defaultFullScreenContentRef = ref();
 const maxWidth = ref(1440);
+const suppliers = ref([]);
 
 watch(workingItem, (newVal) => {
   if (newVal) {
@@ -122,22 +124,37 @@ const saveImport = async () => {
     errorMessage.value = 'Vui lòng chọn sản phẩm để nhập hàng.';
     return;
   }
+  if (workingItem.value.supplierId === null && workingItem.value.supplierName === '') {
+    isActionError.value = true;
+    errorMessage.value = 'Vui lòng chọn người nhập hàng.';
+    return;
+  }
   try {
     isLoading.value = true;
     if (workingItem.value.id > 0) {
       await importService.updateImport(workingItem.value);
     } else {
       await importService.createImport(workingItem.value);
-      await fetchProducts();
-      onCancelClick();
       isActionError.value = true;
       errorMessage.value = 'Lưu đơn nhập hàng thành công.';
+      onCancelClick();
     }
   } catch (error) {
     isActionError.value = true;
     errorMessage.value = 'Đã xảy ra lỗi khi lưu đơn nhập hàng.';
   } finally {
     isLoading.value = false;
+  }
+};
+
+const onSupplierSelected = (event: any) => {
+  console.log(event);
+  if (typeof event === 'string') {
+    workingItem.value.supplierName = event;
+    workingItem.value.supplierId = null;
+  } else {
+    workingItem.value.supplierId = event.id;
+    workingItem.value.supplierName = '';
   }
 };
 
@@ -153,7 +170,22 @@ onMounted(async () => {
     workingItem.value = new ImportResponse();
   }
   await fetchProducts();
+  await fetchSuppliers();
 });
+
+const fetchSuppliers = async () => {
+  try {
+    isLoading.value = true;
+    var params = new BaseQueryParams();
+    params.pageNo = -1;
+    const result = await supplierService.getSuppliers(params);
+    suppliers.value = result;
+  } catch (error) {
+    isError.value = true;
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 const fetchProducts = async () => {
   try {
@@ -188,6 +220,15 @@ const fetchImport = async (importId: number) => {
         <h2>Nhập hàng</h2>
         <v-icon color="primary" @click="onHistoryIconClick">tabler-notes</v-icon>
       </div>
+      <v-combobox
+        class="mt-2"
+        clearable
+        :items="suppliers"
+        item-title="name"
+        item-value="id"
+        label="Người nhập"
+        @update:modelValue="onSupplierSelected"
+      />
       <v-autocomplete 
         class="mt-2"
         v-model="selectedProduct"
@@ -304,4 +345,13 @@ const fetchImport = async (importId: number) => {
       </v-row>
     </div>
   </div>
+  <v-snackbar
+    v-model="isActionError"
+  >
+    {{ errorMessage }}
+
+    <template v-slot:actions>
+      <v-icon @click="isActionError = false" color="error" timeout="2000">mdi-close</v-icon>
+    </template>
+  </v-snackbar>
 </template>

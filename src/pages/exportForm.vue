@@ -22,7 +22,6 @@ const props = defineProps({
 });
 
 const isLoading = ref(false);
-const isError = ref(false);
 const isActionError = ref(false);
 const errorMessage = ref('');
 const { smAndDown } = useDisplay();
@@ -80,6 +79,8 @@ const onChangeQuantity = (item: any, value: string) => {
   const numericValue = parseInt(value);
   if (!isNaN(numericValue)) {
     item.quantity = numericValue;
+    const remain = productRef.value.find(p => p.id === item.productId)?.remain || 0;
+    item.isDirty = item.quantity > remain;
   } else {
     item.quantity = 0;
   }
@@ -102,6 +103,11 @@ const onSaveClick = async () => {
 }
 
 const onPaidClick = async () => {
+  if (workingItem.value.detail.some(i => i.isDirty)) {
+    isActionError.value = true;
+    errorMessage.value = 'Số lượng bán vượt quá tồn kho. Vui lòng kiểm tra lại.';
+    return;
+  }
   workingItem.value.status = ExportStatus.PAID;
   await saveExport();
 }
@@ -159,7 +165,8 @@ const fetchCustomers = async () => {
     isLoading.value = true;
     customerDS.value = await customerService.getCustomers(new BaseQueryParams());
   } catch (error) {
-    isError.value = true;
+    isActionError.value = true;
+    errorMessage.value = 'Đã xảy ra lỗi khi lấy danh sách khách hàng.';
     console.error('Error fetching customers:', error);
   } finally {
     isLoading.value = false;
@@ -174,7 +181,8 @@ const fetchProducts = async () => {
     const result = await warehouseService.getWareHouseInfo(params);
     productRef.value = result.items;
   } catch (error) {
-    isError.value = true;
+    isActionError.value = true;
+    errorMessage.value = 'Đã xảy ra lỗi khi lấy danh sách sản phẩm.';
   } finally {
     isLoading.value = false;
   }
@@ -190,7 +198,8 @@ const fetchExport = async (id: number) => {
       isDeleted: false
     };
   } catch (error) {
-    isError.value = true;
+    isActionError.value = true;
+    errorMessage.value = 'Đã xảy ra lỗi khi lấy thông tin đơn bán hàng.';
     console.error('Error fetching export:', error);
   } finally {
     isLoading.value = false;
@@ -250,6 +259,7 @@ const fetchExport = async (id: number) => {
                   variant="underlined"
                   density="compact"
                   class="no-label text-bold"
+                  :class="item.isDirty ? 'dirty' : ''"
                   v-model.number="item.quantity"
                   type="number"
                   @update:model-value="onChangeQuantity(item, $event)"
@@ -281,4 +291,18 @@ const fetchExport = async (id: number) => {
       </v-row>
     </div>
   </div>
+  <v-snackbar
+    v-model="isActionError"
+  >
+    {{ errorMessage }}
+
+    <template v-slot:actions>
+      <v-icon @click="isActionError = false" color="error" timeout="2000">mdi-close</v-icon>
+    </template>
+  </v-snackbar>
 </template>
+<style lang="scss" scoped>
+.dirty {
+  color: red;
+}
+</style>

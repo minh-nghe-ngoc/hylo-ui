@@ -1,4 +1,5 @@
 import { BaseQueryParams } from "@/models/QueryParams";
+import { ProductHistoryRequest } from "@/models/requests/productRequestModel";
 import { WarehouseItem, WareHouseResponse } from "@/models/responses/warehouseResponseModels";
 import axiosIns from "@/plugins/axios";
 
@@ -30,8 +31,19 @@ const deleteProduct = async (id: string | number): Promise<void> => {
   }
 };
 
+const getHistory = async (params: ProductHistoryRequest): Promise<WareHouseResponse> => {
+  try {
+    const response = await axiosIns.get("/warehouse/history", { params });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching warehouse history:", error);
+    throw error;
+  }
+};
+
 export default {
   getWareHouseInfo,
   updateProduct,
   deleteProduct,
+  getHistory
 };
