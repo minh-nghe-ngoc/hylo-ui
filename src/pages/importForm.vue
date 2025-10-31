@@ -2,16 +2,19 @@
 import { BaseQueryParams } from '@/models/QueryParams';
 import { ImportDetailResponse, ImportResponse } from '@/models/responses/importResponseModels';
 import { WarehouseItem } from '@/models/responses/warehouseResponseModels';
+import { LookUp } from '@/models/shared/LookUp';
 import importService from '@/services/importService';
 import supplierService from '@/services/supplierService';
 import warehouseService from '@/services/warehouseService';
 import { ImportStatus } from '@/shared/enums';
+import { useToast } from 'vue-toast-notification';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 const props = defineProps<{
   importId: number;
 }>();
 
+const toast = useToast();
 const isLoading = ref(false);
 const isError = ref(false);
 const isActionError = ref(false);
@@ -25,7 +28,7 @@ const workingItem = ref<ImportResponse>(new ImportResponse());
 const newProduct = ref<ImportDetailResponse>(new ImportDetailResponse());
 const defaultFullScreenContentRef = ref();
 const maxWidth = ref(1440);
-const suppliers = ref([]);
+const suppliers = ref<LookUp[]>([]);
 
 watch(workingItem, (newVal) => {
   if (newVal) {
@@ -120,13 +123,11 @@ const onImportClick = async () => {
 const saveImport = async () => {
   if (isLoading.value) return; // Prevent multiple submissions
   if (workingItem.value.detail.length === 0) {
-    isActionError.value = true;
-    errorMessage.value = 'Vui lòng chọn sản phẩm để nhập hàng.';
+    toast.error('Vui lòng chọn sản phẩm để nhập hàng.');
     return;
   }
   if (workingItem.value.supplierId === null && workingItem.value.supplierName === '') {
-    isActionError.value = true;
-    errorMessage.value = 'Vui lòng chọn người nhập hàng.';
+    toast.error('Vui lòng chọn người nhập hàng.');
     return;
   }
   try {
@@ -135,13 +136,12 @@ const saveImport = async () => {
       await importService.updateImport(workingItem.value);
     } else {
       await importService.createImport(workingItem.value);
-      isActionError.value = true;
-      errorMessage.value = 'Lưu đơn nhập hàng thành công.';
+      toast.success('Lưu đơn nhập hàng thành công.');
+      fetchProducts();
       onCancelClick();
     }
   } catch (error) {
-    isActionError.value = true;
-    errorMessage.value = 'Đã xảy ra lỗi khi lưu đơn nhập hàng.';
+    toast.error('Đã xảy ra lỗi khi lưu đơn nhập hàng.');
   } finally {
     isLoading.value = false;
   }
@@ -159,6 +159,8 @@ const onSupplierSelected = (event: any) => {
 };
 
 onMounted(async () => {
+  fetchProducts();
+  fetchSuppliers();
   if (defaultFullScreenContentRef.value) {
     const orderCardWidth = defaultFullScreenContentRef.value.offsetWidth;
     maxWidth.value = orderCardWidth;
@@ -169,8 +171,6 @@ onMounted(async () => {
   } else {
     workingItem.value = new ImportResponse();
   }
-  await fetchProducts();
-  await fetchSuppliers();
 });
 
 const fetchSuppliers = async () => {
@@ -181,7 +181,8 @@ const fetchSuppliers = async () => {
     const result = await supplierService.getSuppliers(params);
     suppliers.value = result;
   } catch (error) {
-    isError.value = true;
+    console.error('Error fetching suppliers:', error);
+    toast.error('Đã xảy ra lỗi khi lấy danh sách người vận chuyển');
   } finally {
     isLoading.value = false;
   }
@@ -195,7 +196,8 @@ const fetchProducts = async () => {
     const result = await warehouseService.getWareHouseInfo(params);
     productRef.value = result.items;
   } catch (error) {
-    isError.value = true;
+    console.error('Error fetching products:', error);
+    toast.error('Đã xảy ra lỗi khi lấy danh sách sản phẩm.');
   } finally {
     isLoading.value = false;
   }
@@ -207,7 +209,8 @@ const fetchImport = async (importId: number) => {
     const importData = await importService.getImportById(importId);
     workingItem.value = importData;
   } catch (error) {
-    isError.value = true;
+    console.error('Error fetching import:', error);
+    toast.error('Đã xảy ra lỗi khi lấy thông tin đơn nhập hàng.');
   } finally {
     isLoading.value = false;
   }
@@ -345,13 +348,4 @@ const fetchImport = async (importId: number) => {
       </v-row>
     </div>
   </div>
-  <v-snackbar
-    v-model="isActionError"
-  >
-    {{ errorMessage }}
-
-    <template v-slot:actions>
-      <v-icon @click="isActionError = false" color="error" timeout="2000">mdi-close</v-icon>
-    </template>
-  </v-snackbar>
 </template>

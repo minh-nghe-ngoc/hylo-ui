@@ -7,6 +7,7 @@ import customerService from '@/services/customerService';
 import exportService from '@/services/exportService';
 import warehouseService from '@/services/warehouseService';
 import { ExportStatus } from '@/shared/enums';
+import { useToast } from 'vue-toast-notification';
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 
 const emit = defineEmits(['iconClick']);
@@ -21,9 +22,8 @@ const props = defineProps({
   }
 });
 
+const toast = useToast();
 const isLoading = ref(false);
-const isActionError = ref(false);
-const errorMessage = ref('');
 const { smAndDown } = useDisplay();
 const customerId = ref();
 const customerDS = ref(CustomerMock.customerDS);
@@ -104,8 +104,7 @@ const onSaveClick = async () => {
 
 const onPaidClick = async () => {
   if (workingItem.value.detail.some(i => i.isDirty)) {
-    isActionError.value = true;
-    errorMessage.value = 'Số lượng bán vượt quá tồn kho. Vui lòng kiểm tra lại.';
+    toast.error('Số lượng bán vượt quá tồn kho. Vui lòng kiểm tra lại.');
     return;
   }
   workingItem.value.status = ExportStatus.PAID;
@@ -115,8 +114,7 @@ const onPaidClick = async () => {
 const saveExport = async () => {
   if (isLoading.value) return; // Prevent multiple submissions
   if (workingItem.value.detail.length === 0) {
-    isActionError.value = true;
-    errorMessage.value = 'Vui lòng chọn sản phẩm để bán hàng.';
+    toast.error('Vui lòng chọn sản phẩm để bán hàng.');
     return;
   }
   try {
@@ -125,15 +123,14 @@ const saveExport = async () => {
       await exportService.updateExport(workingItem.value);
     } else {
       await exportService.createExport(workingItem.value);
-      await fetchProducts();
+      fetchProducts();
       onCancelClick();
-      isActionError.value = true;
-      errorMessage.value = 'Lưu đơn bán hàng thành công.';
+      toast.success('Lưu đơn bán hàng thành công.');
     }
     onCancelClick();
   } catch (error) {
-    isActionError.value = true;
-    errorMessage.value = 'Đã xảy ra lỗi khi lưu đơn bán hàng.';
+    console.error('Error saving export:', error);
+    toast.error('Đã xảy ra lỗi khi lưu đơn bán hàng.');
   } finally {
     isLoading.value = false;
   }
@@ -165,8 +162,7 @@ const fetchCustomers = async () => {
     isLoading.value = true;
     customerDS.value = await customerService.getCustomers(new BaseQueryParams());
   } catch (error) {
-    isActionError.value = true;
-    errorMessage.value = 'Đã xảy ra lỗi khi lấy danh sách khách hàng.';
+    toast.error('Đã xảy ra lỗi khi lấy danh sách khách hàng.');
     console.error('Error fetching customers:', error);
   } finally {
     isLoading.value = false;
@@ -181,8 +177,8 @@ const fetchProducts = async () => {
     const result = await warehouseService.getWareHouseInfo(params);
     productRef.value = result.items;
   } catch (error) {
-    isActionError.value = true;
-    errorMessage.value = 'Đã xảy ra lỗi khi lấy danh sách sản phẩm.';
+    toast.error('Đã xảy ra lỗi khi lấy danh sách sản phẩm.');
+    console.error('Error fetching products:', error);
   } finally {
     isLoading.value = false;
   }
@@ -198,8 +194,7 @@ const fetchExport = async (id: number) => {
       isDeleted: false
     };
   } catch (error) {
-    isActionError.value = true;
-    errorMessage.value = 'Đã xảy ra lỗi khi lấy thông tin đơn bán hàng.';
+    toast.error('Đã xảy ra lỗi khi lấy thông tin đơn bán hàng.');
     console.error('Error fetching export:', error);
   } finally {
     isLoading.value = false;
@@ -291,15 +286,6 @@ const fetchExport = async (id: number) => {
       </v-row>
     </div>
   </div>
-  <v-snackbar
-    v-model="isActionError"
-  >
-    {{ errorMessage }}
-
-    <template v-slot:actions>
-      <v-icon @click="isActionError = false" color="error" timeout="2000">mdi-close</v-icon>
-    </template>
-  </v-snackbar>
 </template>
 <style lang="scss" scoped>
 .dirty {
