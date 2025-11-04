@@ -1,12 +1,12 @@
 <script setup lang="ts">
+import { useRoute, useRouter } from 'vue-router';
 import ExportForm from './exportForm.vue';
 import ExportList from './exportList.vue';
-import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
 const currentExportId = ref();
-const isShowingDetail = ref(true);
+const isShowingDetail = ref(false);
 const onHeaderIconClick = () => {
   isShowingDetail.value = !isShowingDetail.value;
 };
