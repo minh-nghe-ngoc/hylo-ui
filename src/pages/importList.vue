@@ -161,7 +161,7 @@ const fetchData = async () => {
       <v-pagination
           v-model="queryParams.pageNo"
           :length="data?.totalPages"
-          total-visible="4"
+          total-visible="5"
           color="primary"
           @update:model-value="fetchData"
         />

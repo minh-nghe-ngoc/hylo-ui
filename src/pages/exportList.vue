@@ -167,7 +167,7 @@ const fetchData = async () => {
         :length="data.totalPages"
         v-model="queryParams.pageNo"
         @update:model-value="fetchData"
-        total-visible="7"
+        total-visible="5"
         color="primary"
       />
     </div>
