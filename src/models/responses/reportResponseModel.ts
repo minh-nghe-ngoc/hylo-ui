@@ -6,6 +6,8 @@ export class ReportItem {
   totalRevenue: number = 0;
   totalCapital: number = 0;
   totalProfit: number = 0;
+  customerName: string = "";
+  detail: ReportItem[] = [];
 
   constructor(init?: Partial<ReportItem>) {
     Object.assign(this, init);

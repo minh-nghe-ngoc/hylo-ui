@@ -4,8 +4,9 @@ import axiosIns from "@/plugins/axios";
 
 const baseUrl = "/report";
 
-export const getReport = async (params: ReportRequest): Promise<ReportResponse> => {
+const getReport = async (params: ReportRequest): Promise<ReportResponse> => {
   const res = await axiosIns.get(baseUrl, { params });
+  console.log('ReportService - getReport - res:', res);
   return res.data;
 };
 

@@ -188,6 +188,7 @@ const fetchExport = async (id: number) => {
   try {
     isLoading.value = true;
     workingItem.value = await exportService.getExportById(id);
+    console.log('Fetched export:', workingItem.value);
     customerId.value = {
       id: workingItem.value.customerId,
       name: workingItem.value.customerName,
@@ -281,8 +282,8 @@ const fetchExport = async (id: number) => {
       <v-row class="px-2 pb-2">
         <v-btn color="error" @click="onCancelClick">Hủy</v-btn>
         <v-spacer />
-        <v-btn class="mr-3" color="secondary" @click="onSaveClick">Lưu</v-btn>
-        <v-btn color="primary" @click="onPaidClick">Thanh Toán</v-btn>
+        <v-btn class="mr-3" color="secondary" @click="onSaveClick" v-if="workingItem.status === ExportStatus.PENDING">Lưu</v-btn>
+        <v-btn color="primary" @click="onPaidClick" v-if="workingItem.status === ExportStatus.PENDING">Thanh Toán</v-btn>
       </v-row>
     </div>
   </div>

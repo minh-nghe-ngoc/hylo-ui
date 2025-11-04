@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import ExportForm from './exportForm.vue';
 import ExportList from './exportList.vue';
+import { useRoute, useRouter } from 'vue-router';
 
+const route = useRoute();
+const router = useRouter();
 const currentExportId = ref();
 const isShowingDetail = ref(true);
 const onHeaderIconClick = () => {
@@ -9,9 +12,18 @@ const onHeaderIconClick = () => {
 };
 
 const onEditIconClick = (item: any) => {
-  isShowingDetail.value = true;
   currentExportId.value = item.id;
+  isShowingDetail.value = true;
 };
+
+onMounted(() => {
+  if (route.query.id) {
+    currentExportId.value = route.query.id;
+    isShowingDetail.value = true;
+  } else {
+    isShowingDetail.value = false;
+  }
+});
 </script>
 <template>
   <ExportForm v-if="isShowingDetail" @iconClick="onHeaderIconClick" :exportId="currentExportId"/>

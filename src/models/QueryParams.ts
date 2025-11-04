@@ -14,7 +14,7 @@ export interface ISortParam {
 
 export class BaseQueryParams implements IBaseQueryParams {
   pageNo?: number;
-  pageSize?: number = 20;
+  pageSize?: number = 10;
   searchText?: string = '';
   sorts?: ISortParam[] = [];
 
