@@ -20,7 +20,6 @@ const data = ref<ReportResponse>(new ReportResponse());
 
 
 const fetchData = async () => {
-  console.log('Fetching data with params:', queryParams.value);
   try {
     isLoading.value = true;
     data.value = await reportService.getReport(queryParams.value);

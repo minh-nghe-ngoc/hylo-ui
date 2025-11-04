@@ -188,7 +188,6 @@ const fetchExport = async (id: number) => {
   try {
     isLoading.value = true;
     workingItem.value = await exportService.getExportById(id);
-    console.log('Fetched export:', workingItem.value);
     customerId.value = {
       id: workingItem.value.customerId,
       name: workingItem.value.customerName,

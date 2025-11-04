@@ -148,7 +148,6 @@ const saveImport = async () => {
 };
 
 const onSupplierSelected = (event: any) => {
-  console.log(event);
   if (typeof event === 'string') {
     workingItem.value.supplierName = event;
     workingItem.value.supplierId = null;

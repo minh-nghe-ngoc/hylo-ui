@@ -6,7 +6,6 @@ const baseUrl = "/report";
 
 const getReport = async (params: ReportRequest): Promise<ReportResponse> => {
   const res = await axiosIns.get(baseUrl, { params });
-  console.log('ReportService - getReport - res:', res);
   return res.data;
 };
 

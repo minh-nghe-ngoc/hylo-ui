@@ -6,7 +6,6 @@ import { useRoute } from 'vue-router';
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 const route = useRoute();
-console.log(route.params.id);
 
 const tableHeaders = [
   { title: '', key: 'info', width: '60%' },
@@ -41,7 +40,6 @@ const fetchData = (pageNo: number = 1, pageSize: number = 10) => {
 }
 
 const onItemClick = (item: any) => {
-  console.log('Item clicked:', item.raw);
 };
 
 const onPaginationChange = (options: any) => {
