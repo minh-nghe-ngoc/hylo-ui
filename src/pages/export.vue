@@ -6,7 +6,7 @@ import ExportList from './exportList.vue';
 const route = useRoute();
 const router = useRouter();
 const currentExportId = ref();
-const isShowingDetail = ref(false);
+const isShowingDetail = ref(true);
 const onHeaderIconClick = () => {
   isShowingDetail.value = !isShowingDetail.value;
 };
@@ -20,8 +20,6 @@ onMounted(() => {
   if (route.query.id) {
     currentExportId.value = route.query.id;
     isShowingDetail.value = true;
-  } else {
-    isShowingDetail.value = false;
   }
 });
 </script>

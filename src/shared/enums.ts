@@ -39,3 +39,9 @@ export enum ReportRange {
   THIS_YEAR = 5,
   CUSTOM = 6
 }
+
+export enum HistoryType {
+  IMPORT = 0,
+  EXPORT = 1,
+  ADJUSTMENT = 2
+}

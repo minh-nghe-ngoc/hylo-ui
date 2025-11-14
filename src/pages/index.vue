@@ -4,9 +4,11 @@ import { WarehouseItem, WareHouseResponse } from '@/models/responses/warehouseRe
 import warehouseService from '@/services/warehouseService';
 import { SortBy } from '@/shared/enums';
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const isLoading = ref(false);
 const isError = ref(false);
+const router = useRouter();
 const data = ref<WareHouseResponse>(new WareHouseResponse());
 const queryParams = ref<BaseQueryParams>(new BaseQueryParams().addSort(SortBy.REMAINING_PRICE, false));
 const menuItems = ref([
@@ -17,6 +19,10 @@ const menuItems = ref([
   {
     icon: 'mdi-delete',
     action: (product: WarehouseItem) => onDeleteIconClick(product)
+  },
+  {
+    icon: 'mdi-history',
+    action: (product: WarehouseItem) => onHistoryIconClick(product)
   }
 ]);
 
@@ -38,6 +44,10 @@ const onDeleteIconClick = async (product: WarehouseItem) => {
     isError.value = true;
     console.error('Error deleting product:', error);
   }
+};
+
+const onHistoryIconClick = (product: WarehouseItem) => {
+  router.push({ path: `/history/${product.id}` });
 };
 
 const onSaveIconClick = async (product: any) => {

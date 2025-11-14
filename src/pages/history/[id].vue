@@ -1,79 +1,119 @@
 <script setup lang="ts">
 import { ProductHistoryRequest } from '@/models/requests/productRequestModel';
-import { ProductHistoryModel } from '@/models/responses/ProductHistoryModel';
+import { ProductHistoryResponse } from '@/models/responses/ProductHistoryModel';
+import warehouseService from '@/services/warehouseService';
+import { HistoryType } from '@/shared/enums';
 import moment from 'moment';
 import { useRoute } from 'vue-router';
 import { VDataTable } from "vuetify/labs/VDataTable";
 
 const route = useRoute();
+const router = useRouter();
+const loading = ref(false);
+const pagination = ref({
+  page: 1,
+  totalPages: 1,
+  totalItems: 11
+});
 
 const tableHeaders = [
-  { title: '', key: 'info', width: '60%' },
-  { title: 'SL', key: 'quantity' },
+  { title: 'Giao dịch', key: 'info', width: '60%' },
+  { title: 'SL', key: 'quantityChange' },
   { title: 'Tồn', key: 'remain' },
 ];
-const workingItem = ref<ProductHistoryModel>(new ProductHistoryModel({
-  id: 1,
-  name: 'Product 1',
-  unitPrice: 100,
-  sellPrice: 120,
-  remain: 50,
-  histories: [
-    {
-      id: 1,
-      isExport: false,
-      quantity: 10,
-      date: new Date(),
-      name: 'Minh Nghê',
-      unitPrice: 100,
-      remain: 40
-    }
-  ]
-}));
+const workingItem = ref<ProductHistoryResponse>(new ProductHistoryResponse());
 
-const fetchData = (pageNo: number = 1, pageSize: number = 10) => {
-  const queryParams: ProductHistoryRequest = {
-    id: parseInt(route.params.id as string),
-    pageSize: pageSize,
-    pageNo: pageNo
-  };
-}
+onMounted(async () => {
+  try {
+    loading.value = true;
+    await fetchData();
+  } catch (error) {
+    console.error('Error fetching product history:', error);
+  } finally {
+    loading.value = false;
+  }
+});
+
+const fetchData = async () => {
+  const queryParams: ProductHistoryRequest = new ProductHistoryRequest();
+  queryParams.id = Number(route.params.id) || 0;
+  queryParams.pageNo = pagination.value.page;
+
+  const res = await warehouseService.getHistory(queryParams);
+  if (res) {
+    workingItem.value = res;
+    pagination.value.page = res.pageNo;
+    pagination.value.totalItems = res.totalItems;
+    pagination.value.totalPages = res.totalPages;
+  }
+};
 
 const onItemClick = (item: any) => {
+  switch (item.raw.historyType) {
+    case HistoryType.IMPORT:
+      router.push({ name: 'import', query: { id: item.raw.referenceId } });
+      break;
+    case HistoryType.EXPORT:
+      router.push({ name: 'export', query: { id: item.raw.referenceId } });
+      break;
+    default:
+      return;
+  }
 };
 
 const onPaginationChange = (options: any) => {
-  fetchData(options.page, options.itemsPerPage);
+  console.log('Pagination changed:', options);
+};
+
+const getIcon = (item: HistoryType) => {
+  console.log('Getting icon for history type:', item);
+  switch (item) {
+    case HistoryType.IMPORT:
+      return 'mdi-download';
+    case HistoryType.EXPORT:
+      return 'mdi-upload';
+    case HistoryType.ADJUSTMENT:
+      return 'mdi-swap-horizontal';
+    default:
+      return 'mdi-help-circle';
+  }
 };
 </script>
 <template>
-  <v-card>
+  <v-card
+    :loading="loading"
+  >
     <v-card-title>
-      <h3>{{ workingItem.name }}</h3>
+      <h3>{{ workingItem.productName }}</h3>
       <v-row>
-        <v-col cols="4">
-          <div>Giá nhập: <br />{{ workingItem.unitPrice.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</div>
-        </v-col>
-        <v-col cols="4">
-          <div>Giá bán: <br />{{ workingItem.sellPrice.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</div>
-        </v-col>
         <v-col cols="2">
-          <div>Tồn kho: <br />{{ workingItem.remain }}</div>
+          <div>Tồn: {{ workingItem.productRemain }}</div>
         </v-col>
       </v-row>
       <v-divider />
     </v-card-title>
     <VDataTable
-      :items="workingItem.histories"
+      :loading="loading"
+      :items="workingItem.items"
       :headers="tableHeaders"
       fixed-header
       @update:options="onPaginationChange">
       <template #item.info="{ item }">
         <div @click="onItemClick(item)">
-          <h4><v-icon>{{ item.raw.isExport ? 'mdi-upload' : 'mdi-download' }}</v-icon> {{ item.raw.name }}</h4>
-          <div>{{ moment(item.raw.date).format('DD/MM/YYYY HH:mm') }}</div>
+          <h4><v-icon>{{ getIcon(item.raw.historyType) }}</v-icon> {{ item.raw.referenceName }}</h4>
+          <div>{{ moment(item.raw.updatedAt).format('DD/MM/YYYY HH:mm') }}</div>
           <div>Giá vốn: {{ item.raw.unitPrice.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</div>
+          <div>Giá bán: {{ item.raw.sellPrice.toLocaleString('vi-VN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}</div>
         </div>
+      </template>
+      <template #bottom>
+        <v-pagination
+          v-model="pagination.page"
+          :length="pagination.totalPages"
+          total-visible="5"
+          class="my-4"
+          @@update="onPaginationChange"
+        ></v-pagination>
       </template>
     </VDataTable>
   </v-card>
