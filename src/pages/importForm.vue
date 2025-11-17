@@ -82,6 +82,10 @@ const updateUnitPrice = (item: any, value: string, priceType: 'unitPrice' | 'sel
   if (!isNaN(numericValue)) {
     item[priceType] = numericValue;
   }
+
+  if (priceType === 'unitPrice') {
+    item.sellPrice = parseInt((Math.round(numericValue * 1.1) / 1000).toFixed(0)) * 1000;
+  }
 };
 
 const onRemoveIconClick = (item: ImportDetailResponse) => {
