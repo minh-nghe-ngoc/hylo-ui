@@ -43,5 +43,7 @@ export enum ReportRange {
 export enum HistoryType {
   IMPORT = 0,
   EXPORT = 1,
-  ADJUSTMENT = 2
+  ADJUSTMENT = 2,
+  IMPORT_ADJUSTMENT = 3,
+  EXPORT_ADJUSTMENT = 4
 }

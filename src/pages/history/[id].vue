@@ -74,6 +74,10 @@ const getIcon = (item: HistoryType) => {
       return 'mdi-upload';
     case HistoryType.ADJUSTMENT:
       return 'mdi-swap-horizontal';
+    case HistoryType.IMPORT_ADJUSTMENT:
+      return 'mdi-home-import-outline';
+    case HistoryType.EXPORT_ADJUSTMENT:
+      return 'mdi-home-export-outline';
     default:
       return 'mdi-help-circle';
   }

@@ -90,9 +90,10 @@ const onRemoveIconClick = (item: ImportDetailResponse) => {
   }
 };
 const onAddIconClick = () => {
+  debugger
   if (workingItem.value.detail.some(item => item.productName === newProduct.value.productName)) {
     isActionError.value = true;
-    errorMessage.value = 'Sản phẩm đã được thêm. Vui lòng chỉnh sửa số lượng nếu cần.';
+    toast.error('Sản phẩm đã được thêm. Vui lòng chỉnh sửa số lượng nếu cần.');
     return;
   }
   if (newProduct.value && workingItem.value) {
@@ -101,7 +102,7 @@ const onAddIconClick = () => {
       newProduct.value = new ImportDetailResponse();
     } else {
       isActionError.value = true;
-      errorMessage.value = 'Vui lòng nhập đầy đủ thông tin sản phẩm trước khi thêm.';
+      toast.error('Vui lòng nhập đầy đủ thông tin sản phẩm trước khi thêm.');
     }
   }
 };
@@ -136,10 +137,10 @@ const saveImport = async () => {
       await importService.updateImport(workingItem.value);
     } else {
       await importService.createImport(workingItem.value);
-      toast.success('Lưu đơn nhập hàng thành công.');
-      fetchProducts();
-      onCancelClick();
     }
+    toast.success('Lưu đơn nhập hàng thành công.');
+    fetchProducts();
+    onCancelClick();
   } catch (error) {
     toast.error('Đã xảy ra lỗi khi lưu đơn nhập hàng.');
   } finally {
@@ -268,6 +269,10 @@ const fetchImport = async (importId: number) => {
                   variant="underlined"
                   density="compact"
                   class="no-label text-bold"
+                  append-inner-icon="mdi-plus"
+                  prepend-inner-icon="mdi-minus"
+                  @click:append-inner="item.quantity += 1"
+                  @click:prepend-inner="item.quantity -= 1"
                   v-model.number="item.quantity"
                   type="number"
                 />
@@ -311,6 +316,10 @@ const fetchImport = async (importId: number) => {
                   density="compact"
                   class="no-label text-bold"
                   v-model.number="newProduct.quantity"
+                  append-inner-icon="mdi-plus"
+                  prepend-inner-icon="mdi-minus"
+                  @click:append-inner="newProduct.quantity += 1"
+                  @click:prepend-inner="newProduct.quantity -= 1"
                   type="number"
                 />
               </v-col>
@@ -348,3 +357,12 @@ const fetchImport = async (importId: number) => {
     </div>
   </div>
 </template>
+<style lang="scss" scoped>
+:deep(.v-field__append-inner) {
+  padding-top: 1rem;
+}
+
+:deep(.v-field__prepend-inner) {
+  padding-top: 1rem;
+}
+</style>

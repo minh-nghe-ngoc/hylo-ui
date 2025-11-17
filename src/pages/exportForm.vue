@@ -123,10 +123,10 @@ const saveExport = async () => {
       await exportService.updateExport(workingItem.value);
     } else {
       await exportService.createExport(workingItem.value);
-      fetchProducts();
-      onCancelClick();
-      toast.success('Lưu đơn bán hàng thành công.');
     }
+    fetchProducts();
+    onCancelClick();
+    toast.success('Lưu đơn bán hàng thành công.');
     onCancelClick();
   } catch (error) {
     console.error('Error saving export:', error);
@@ -249,15 +249,19 @@ const fetchExport = async (id: number) => {
                   @update:model-value="(value: any) => updateSellPrice(item, value)"
                 />
               </v-col>
-              <v-col cols="4" offset="1">
+              <v-col cols="6" offset="1">
                 <v-text-field
                   variant="underlined"
+                  prepend-inner-icon="mdi-minus"
+                  append-inner-icon="mdi-plus"
                   density="compact"
                   class="no-label text-bold"
                   :class="item.isDirty ? 'dirty' : ''"
                   v-model.number="item.quantity"
                   type="number"
                   @update:model-value="onChangeQuantity(item, $event)"
+                  @click:append-inner="item.quantity += 1"
+                  @click:prepend-inner="item.quantity -= 1"
                 />
               </v-col>
               <v-col cols="1" v-if="!smAndDown" class="d-flex align center justify-end">
@@ -290,5 +294,13 @@ const fetchExport = async (id: number) => {
 <style lang="scss" scoped>
 .dirty {
   color: red;
+}
+
+:deep(.v-input__append-inner){
+  padding-top: 1rem;
+}
+
+:deep(.v-input__prepend-inner){
+  padding-top: 1rem;
 }
 </style>

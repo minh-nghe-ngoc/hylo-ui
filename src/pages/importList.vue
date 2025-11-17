@@ -141,15 +141,15 @@ const fetchData = async () => {
                   </v-col>
                 </v-row>
               </div>
-              <v-row dense v-if="importItem.status === 0">
-                <v-col cols="3">
+              <v-row dense>
+                <v-col cols="3" v-if="importItem.status === ImportStatus.PENDING">
                   <v-btn color="error" @click="onDeleteIconClick(importItem)">Xóa</v-btn>
                 </v-col>
                 <v-spacer />
                 <v-col cols="3">
                   <v-btn color="secondary" @click="onEditIconClick(importItem)">Sửa</v-btn>
                 </v-col>
-                <v-col cols="4">
+                <v-col cols="4"  v-if="importItem.status === ImportStatus.PENDING">
                   <v-btn color="primary" @click="onPaidBtnClick(importItem)">Thanh toán</v-btn>
                 </v-col>
               </v-row>
