@@ -272,7 +272,7 @@ const fetchImport = async (importId: number) => {
                 <v-text-field
                   variant="underlined"
                   density="compact"
-                  class="no-label text-bold"
+                  class="no-label text-bold centered-input"
                   append-inner-icon="mdi-plus"
                   prepend-inner-icon="mdi-minus"
                   @click:append-inner="item.quantity += 1"
@@ -318,7 +318,7 @@ const fetchImport = async (importId: number) => {
                 <v-text-field
                   variant="underlined"
                   density="compact"
-                  class="no-label text-bold"
+                  class="no-label text-bold centered-input"
                   v-model.number="newProduct.quantity"
                   append-inner-icon="mdi-plus"
                   prepend-inner-icon="mdi-minus"
@@ -368,5 +368,9 @@ const fetchImport = async (importId: number) => {
 
 :deep(.v-field__prepend-inner) {
   padding-top: 1rem;
+}
+
+:deep(.centered-input input) {
+  text-align: center
 }
 </style>

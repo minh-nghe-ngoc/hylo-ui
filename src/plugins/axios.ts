@@ -4,7 +4,7 @@ import router from '@/router'
 const axiosIns = axios.create({
   // You can add your headers here
   // ================================
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  // baseURL: import.meta.env.VITE_API_BASE_URL,
   // timeout: 1000,
   // headers: {'X-Custom-Header': 'foobar'}
 })

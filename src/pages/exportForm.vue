@@ -255,7 +255,7 @@ const fetchExport = async (id: number) => {
                   prepend-inner-icon="mdi-minus"
                   append-inner-icon="mdi-plus"
                   density="compact"
-                  class="no-label text-bold"
+                  class="no-label text-bold centered-input"
                   :class="item.isDirty ? 'dirty' : ''"
                   v-model.number="item.quantity"
                   type="number"
@@ -286,7 +286,7 @@ const fetchExport = async (id: number) => {
         <v-btn color="error" @click="onCancelClick">Hủy</v-btn>
         <v-spacer />
         <v-btn class="mr-3" color="secondary" @click="onSaveClick" v-if="workingItem.status === ExportStatus.PENDING">Lưu</v-btn>
-        <v-btn color="primary" @click="onPaidClick" v-if="workingItem.status === ExportStatus.PENDING">Thanh Toán</v-btn>
+        <v-btn color="primary" @click="onPaidClick">Thanh Toán</v-btn>
       </v-row>
     </div>
   </div>
@@ -302,5 +302,9 @@ const fetchExport = async (id: number) => {
 
 :deep(.v-input__prepend-inner){
   padding-top: 1rem;
+}
+
+:deep(.centered-input input) {
+  text-align: center
 }
 </style>

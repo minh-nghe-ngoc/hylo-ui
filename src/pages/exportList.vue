@@ -146,7 +146,7 @@ const fetchData = async () => {
                 </v-col>
               </v-row>
             </div>
-            <v-row dense v-if="item.status === ExportStatus.PENDING">
+            <v-row dense>
               <v-col cols="3">
                 <v-btn color="error" @click="onDeleteIconClick(item)">Xóa</v-btn>
               </v-col>
@@ -155,7 +155,7 @@ const fetchData = async () => {
                 <v-btn color="secondary" @click="onEditIconClick(item)">Sửa</v-btn>
               </v-col>
               <v-col cols="4">
-                <v-btn color="primary" @click="onPaidIconClick(item)">Thanh toán</v-btn>
+                <v-btn color="primary" @click="onPaidIconClick(item)"  v-if="item.status === ExportStatus.PENDING">Thanh toán</v-btn>
               </v-col>
             </v-row>
           </v-expansion-panel-text>
